@@ -55,4 +55,4 @@ evo.on('guildMemberAdd', evo => {
 
   channel.sendEmbed(embed);
 });
-evo.login("NTAxNzg4NjU5NDczNzExMTA0.Dqe5gg.CbnxKbUVkktF0QBM9bWZZTc25ag")
+evo.login("NO")
