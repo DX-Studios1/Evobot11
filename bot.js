@@ -12,6 +12,8 @@ const verified = ["289764100915855363"]
 
 evo.on('message', async message => {
 
+      if(message.author.bot) return;
+  if(message.channel.type === "dm") return;
     
       let prefixes = JSON.parse(fs.readFileSync("./prefixes.json", "utf8"));
       if(!prefixes[message.guild.id]){
@@ -20,23 +22,16 @@ evo.on('message', async message => {
         };
       }
     
-      let prefix = prefixes[message.guild.id].prefixes;
-      if(!message.content.startsWith(prefix)) return;
-    
-    
-      let messageArray = message.content.toLowerCase().split(" ");
-      let cmd = messageArray[0];
-      let args = messageArray.slice(1);
-    
-      let commandfile = bot.commands.get(cmd.slice(prefix.length));
-      if(commandfile) commandfile.run(bot,message,args);
-    
-    
-    let args = message.content.slice(prefix.length).trim().split(' ');
-    let cmd = args.shift().toLowerCase();
+  let prefix = prefixes[message.guild.id].prefixes;
+  if(!message.content.startsWith(prefix)) return;
 
-    if(message.author.bot) return;
-    if(!message.content.startsWith(prefix)) return;
+
+  let messageArray = message.content.toLowerCase().split(" ");
+  let cmd = messageArray[0];
+  let args = messageArray.slice(1);
+
+  let commandfile = bot.commands.get(cmd.slice(prefix.length));
+  if(commandfile) commandfile.run(bot,message,args);
 
 
 
