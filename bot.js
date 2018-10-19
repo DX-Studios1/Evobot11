@@ -5,15 +5,32 @@ const active = new Map();
 let anti_spam = require("discord-anti-spam");
 const sWlc = {}
 const moment = require ('moment')
+evo.commands = new Discord.Collection();
 
 
 
 const verified = ["289764100915855363"]
 
+fs.readdir("./Commands/", (err, files) => {
+
+  if(err) console.log(err);
+  let jsfile = files.filter(f => f.split(".").pop() === "js");
+  if(jsfile.length <= 0){
+    console.log("Couldn't find commands.");
+    return;
+  }
+
+  jsfile.forEach((f, i) =>{
+    let props = require(`./Commands/${f}`);
+    console.log(`${f} loaded!`);
+    bot.commands.set(props.help.name, props);
+  });
+
+});
+
 evo.on('message', async message => {
 
       if(message.author.bot) return;
-  if(message.channel.type === "dm") return;
     
       let prefixes = JSON.parse(fs.readFileSync("./prefixes.json", "utf8"));
       if(!prefixes[message.guild.id]){
@@ -30,22 +47,13 @@ evo.on('message', async message => {
   let cmd = messageArray[0];
   let args = messageArray.slice(1);
 
-  let commandfile = bot.commands.get(cmd.slice(prefix.length));
-  if(commandfile) commandfile.run(bot,message,args);
+  let ops = {
+  verified: verified
+  }
+      
+  let commandfile = evo.commands.get(cmd.slice(prefix.length));
+  if(commandfile) commandfile.run(evo,message,args,ops);
 
-
-
-
-    try {
-      let ops = {
-        verified: verified
-      }
-
-      let commandFile = require(`./Commands/${cmd}.js`);
-      commandFile.run(evo, message, args, ops);
-    } catch(e) {
-      console.log(e.stack);
-    }
 
   })
 evo.on('ready', () => {
