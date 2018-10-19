@@ -10,9 +10,28 @@ const moment = require ('moment')
 
 const verified = ["289764100915855363"]
 
-var prefix = ".";
 evo.on('message', async message => {
 
+    
+      let prefixes = JSON.parse(fs.readFileSync("./prefixes.json", "utf8"));
+      if(!prefixes[message.guild.id]){
+        prefixes[message.guild.id] = {
+          prefixes: "."
+        };
+      }
+    
+      let prefix = prefixes[message.guild.id].prefixes;
+      if(!message.content.startsWith(prefix)) return;
+    
+    
+      let messageArray = message.content.toLowerCase().split(" ");
+      let cmd = messageArray[0];
+      let args = messageArray.slice(1);
+    
+      let commandfile = bot.commands.get(cmd.slice(prefix.length));
+      if(commandfile) commandfile.run(bot,message,args);
+    
+    
     let args = message.content.slice(prefix.length).trim().split(' ');
     let cmd = args.shift().toLowerCase();
 
@@ -100,10 +119,10 @@ if(message.author.bot) return;
     channel: "welcome"
 }
 const channel = sWlc[message.guild.id].channel
-  if (message.content.startsWith(prefix + "setwelcomer")) {
+  if (message.content.startsWith(".setwelcomer")) {
     if(!message.member.hasPermission(`MANAGE_GUILD`)) return;
     let newChannel = message.content.split(' ').slice(1).join(" ")
-    if(!newChannel) return message.reply(`**${prefix}setwelcomer <channel name>**`)
+    if(!newChannel) return message.reply(`**.setwelcomer <channel name>**`)
     sWlc[message.guild.id].channel = newChannel
     message.channel.send(`**${message.guild.name}'s channel has been changed to ${newChannel}**`);
  }
@@ -202,21 +221,4 @@ Wouldn't want them getting broken!:no_entry_sign:
       if (_xShaDowZx.content === 'Jtest') {
       evo.emit('guildMemberAdd', _xShaDowZx.member || await _xShaDowZx.guild.fetchMember(_xShaDowZx.author));
       }});
-      let prefixes = JSON.parse(fs.readFileSync("./prefixes.json", "utf8"));
-      if(!prefixes[message.guild.id]){
-        prefixes[message.guild.id] = {
-          prefixes: config.prefix
-        };
-      }
-    
-      let prefix = prefixes[message.guild.id].prefixes;
-      if(!message.content.startsWith(prefix)) return;
-    
-    
-      let messageArray = message.content.toLowerCase().split(" ");
-      let cmd = messageArray[0];
-      let args = messageArray.slice(1);
-    
-      let commandfile = bot.commands.get(cmd.slice(prefix.length));
-      if(commandfile) commandfile.run(bot,message,args);
 evo.login("TOKEN")
